@@ -43,13 +43,13 @@ sparcbot_driver:
     right_motor:
       name: right
       gpio_dir: 22
-      gpio_ps: 25
+      gpio_ps: 16
       gpio_enc_a: 5
       gpio_enc_b: 6
       pwm_chip: 0
       pwm_channel: 1
       pwm_frequency_hz: 20000
-      motor_sign: 1
+      motor_sign: -1
       encoder_sign: 1
 
 # -----------------------------------------------------------------------------
