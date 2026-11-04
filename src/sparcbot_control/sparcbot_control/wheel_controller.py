@@ -33,6 +33,15 @@ class WheelController:
             raise ValueError('base_width_m must be > 0')
 
         self.config = [left_config, right_config]
+
+        # kp, kd, ki
+        self.config[RIGHT].kp = 0.2
+        self.config[LEFT].kp = 0.2
+
+        self.config[RIGHT].ki = 0.2
+        self.config[LEFT].ki = 0.2
+
+
         self.base_width_m = base_width_m     # distance between the wheels [m]
 
         # State you can use in compute(). Update it there as your controller needs.
@@ -102,18 +111,60 @@ class WheelController:
             linear_velocity_m_s, angular_velocity_rad_s)
 
         # TODO: write the controller for both wheels: 
+
+        # kp and ki are in init()
+
+        # Define Errors
+        e_r = target_velocity_m_s[RIGHT] - measured_velocity_m_s[RIGHT]
+        e_l = target_velocity_m_s[LEFT] - measured_velocity_m_s[LEFT]
+
+
+        # For combating anti-windup
+
+        # Start by predicitng u for Right and Left
+        integral_prediction_r = self.error_integral[RIGHT] + e_r * dt_s
+        integral_prediction_l = self.error_integral[LEFT] + e_l * dt_s
+
+        u_prediction_r = self.config[RIGHT].kp * e_r + self.config[RIGHT].ki * integral_prediction_r
+        u_prediction_l = self.config[LEFT].kp * e_l + self.config[LEFT].ki * integral_prediction_l
+
+        #Determine u_saturated for right and left
+
+        u_sat_r = max(-1*self.config[RIGHT].max_command, min(self.config[RIGHT].max_command, u_prediction_r))
+        u_sat_l = max(-1*self.config[LEFT].max_command, min(self.config[LEFT].max_command, u_prediction_l))
+
+        if u_prediction_r != u_sat_r and e_r * u_prediction_r > 0:
+            c_r = 0
+
+        else:
+            c_r = e_r
+
+        if u_prediction_l != u_sat_l and e_l * u_prediction_l > 0:
+            c_l = 0
+
+        else:
+            c_l = e_l
+
+        self.error_integral[RIGHT] = self.error_integral[RIGHT] + c_r* dt_s
+        self.error_integral[LEFT] = self.error_integral[LEFT] + c_l* dt_s 
+
+        u_r = self.config[RIGHT].kp * e_r + self.config[RIGHT].ki * self.error_integral[RIGHT]
+        u_l = self.config[LEFT].kp * e_l + self.config[LEFT].ki * self.error_integral[LEFT]
+
+
+
+
         # Suggestions: you can use feedforward, deadband compensation and feedback, 
         # using target_velocity_m_s, measured_velocity_m_s, self.config[LEFT] / self.config[RIGHT]
         # and the state set up in __init__. Use self.log(...) to record data.
 
         # BEGIN SOLUTION
 
+        left_wheel_output = WheelControllerOutput(command=u_l) #TODO set command to your final controller output
 
-
-        left_wheel_output = WheelControllerOutput(command=0.0) #TODO set command to your final controller output
-
-        right_wheel_output = WheelControllerOutput(command=0.0) #TODO set command to your final controller output
+        right_wheel_output = WheelControllerOutput(command=u_r) #TODO set command to your final controller output
         return [left_wheel_output, right_wheel_output]
+
         # END SOLUTION
 
     def reset(self) -> None:
