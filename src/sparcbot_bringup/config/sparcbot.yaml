@@ -73,8 +73,8 @@ wheel_controller:
         forward_velocity_gain: 0.0
         reverse_static: 0.0
         reverse_velocity_gain: 0.0
-        forward_breakaway: 0.0
-        reverse_breakaway: 0.0
+        forward_breakaway: 0.025
+        reverse_breakaway: 0.025
         stopped_velocity_threshold: 0.025
         max_command: 1.0
         zero_velocity_threshold: 0.0005
@@ -88,8 +88,8 @@ wheel_controller:
         forward_velocity_gain: 0.0
         reverse_static: 0.0
         reverse_velocity_gain: 0.0
-        forward_breakaway: 0.0
-        reverse_breakaway: 0.0
+        forward_breakaway: 0.025
+        reverse_breakaway: 0.025
         stopped_velocity_threshold: 0.025
         max_command: 1.0
         zero_velocity_threshold: 0.0005

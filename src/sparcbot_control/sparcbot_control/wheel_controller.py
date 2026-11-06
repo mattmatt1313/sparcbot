@@ -35,11 +35,11 @@ class WheelController:
         self.config = [left_config, right_config]
 
         # kp, kd, ki
-        self.config[RIGHT].kp = 0.2
-        self.config[LEFT].kp = 0.2
+        self.config[RIGHT].kp = 5.75
+        self.config[LEFT].kp = 4.8
 
-        self.config[RIGHT].ki = 0.2
-        self.config[LEFT].ki = 0.2
+        self.config[RIGHT].ki = 1.35
+        self.config[LEFT].ki = 1.35
 
 
         self.base_width_m = base_width_m     # distance between the wheels [m]
@@ -151,18 +151,36 @@ class WheelController:
         u_r = self.config[RIGHT].kp * e_r + self.config[RIGHT].ki * self.error_integral[RIGHT]
         u_l = self.config[LEFT].kp * e_l + self.config[LEFT].ki * self.error_integral[LEFT]
 
-
-
-
         # Suggestions: you can use feedforward, deadband compensation and feedback, 
         # using target_velocity_m_s, measured_velocity_m_s, self.config[LEFT] / self.config[RIGHT]
         # and the state set up in __init__. Use self.log(...) to record data.
 
-        # BEGIN SOLUTION
+        # Right wheel deadband compensation
+        if abs(measured_velocity_m_s[RIGHT]) < self.config[RIGHT].stopped_velocity_threshold:
+
+            if target_velocity_m_s[RIGHT] > 0 and u_r > 0:
+                u_r = max(u_r, abs(self.config[RIGHT].forward_breakaway))
+
+            elif target_velocity_m_s[RIGHT] < 0 and u_r < 0:
+                u_r = min(u_r, -abs(self.config[RIGHT].reverse_breakaway))
+
+        # Left wheel deadband compensation
+        if abs(measured_velocity_m_s[LEFT]) < self.config[LEFT].stopped_velocity_threshold:
+
+            if target_velocity_m_s[LEFT] > 0 and u_l > 0:
+                u_l = max(u_l, abs(self.config[LEFT].forward_breakaway))
+
+            elif target_velocity_m_s[LEFT] < 0 and u_l < 0:
+                u_l = min(u_l, -abs(self.config[LEFT].reverse_breakaway))
+
+        u_r = max(-self.config[RIGHT].max_command, min(self.config[RIGHT].max_command, u_r))
+
+        u_l = max(-self.config[LEFT].max_command, min(self.config[LEFT].max_command, u_l))
 
         left_wheel_output = WheelControllerOutput(command=u_l) #TODO set command to your final controller output
 
         right_wheel_output = WheelControllerOutput(command=u_r) #TODO set command to your final controller output
+
         return [left_wheel_output, right_wheel_output]
 
         # END SOLUTION
