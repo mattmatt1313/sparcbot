@@ -184,7 +184,7 @@ def plot(path, rows, rates, duration_s, title_suffix='', show=True, band=True,
     fig, axes = plt.subplots(len(panels), 1, figsize=(11, 3.4 * len(panels)), sharex=True)
 
     for ax, (title, ylabel, measured, cmd) in zip(axes, panels):
-        ax.plot(t, measured, label='measured', linewidth=1.2)
+        ax.plot(t, [-v for v in measured], label='measured', linewidth=1.2)
         ax.plot(t, cmd, '--', label='commanded', linewidth=1.5)
         if band:
             # Band half-width for each step: commanded value / step duration.

@@ -35,8 +35,8 @@ class WheelController:
         self.config = [left_config, right_config]
 
         # kp, kd, ki
-        self.config[RIGHT].kp = 5.75
-        self.config[LEFT].kp = 4.8
+        self.config[RIGHT].kp = 4
+        self.config[LEFT].kp = 3.5
 
         self.config[RIGHT].ki = 1.35
         self.config[LEFT].ki = 1.35
@@ -114,9 +114,15 @@ class WheelController:
 
         # kp and ki are in init()
 
+        kv_r = 1.5
+        kv_l = 1.5
+
+        u_ff_r = kv_r * target_velocity_m_s[RIGHT]
+        u_ff_l = kv_l * target_velocity_m_s[LEFT]
+
         # Define Errors
-        e_r = target_velocity_m_s[RIGHT] - measured_velocity_m_s[RIGHT]
-        e_l = target_velocity_m_s[LEFT] - measured_velocity_m_s[LEFT]
+        e_r = target_velocity_m_s[RIGHT] - (-1)*measured_velocity_m_s[RIGHT]
+        e_l = target_velocity_m_s[LEFT] - (-1)*measured_velocity_m_s[LEFT]
 
 
         # For combating anti-windup
@@ -148,8 +154,8 @@ class WheelController:
         self.error_integral[RIGHT] = self.error_integral[RIGHT] + c_r* dt_s
         self.error_integral[LEFT] = self.error_integral[LEFT] + c_l* dt_s 
 
-        u_r = self.config[RIGHT].kp * e_r + self.config[RIGHT].ki * self.error_integral[RIGHT]
-        u_l = self.config[LEFT].kp * e_l + self.config[LEFT].ki * self.error_integral[LEFT]
+        u_r = u_ff_r + self.config[RIGHT].kp * e_r + self.config[RIGHT].ki * self.error_integral[RIGHT]
+        u_l = u_ff_l + self.config[LEFT].kp * e_l + self.config[LEFT].ki * self.error_integral[LEFT]
 
         # Suggestions: you can use feedforward, deadband compensation and feedback, 
         # using target_velocity_m_s, measured_velocity_m_s, self.config[LEFT] / self.config[RIGHT]
@@ -173,9 +179,9 @@ class WheelController:
             elif target_velocity_m_s[LEFT] < 0 and u_l < 0:
                 u_l = min(u_l, -abs(self.config[LEFT].reverse_breakaway))
 
-        u_r = max(-self.config[RIGHT].max_command, min(self.config[RIGHT].max_command, u_r))
+        u_r = max(-self.config[RIGHT].max_command, min(self.config[RIGHT].max_command, -u_r))
 
-        u_l = max(-self.config[LEFT].max_command, min(self.config[LEFT].max_command, u_l))
+        u_l = max(-self.config[LEFT].max_command, min(self.config[LEFT].max_command, -u_l))
 
         left_wheel_output = WheelControllerOutput(command=u_l) #TODO set command to your final controller output
 

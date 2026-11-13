@@ -266,7 +266,7 @@ def plot(path, rows, events, show=True):
         (axes[1], 'Right wheel', 7, 8),
     )
     for ax, title, cmd_i, meas_i in panels:
-        ax.plot(t, [r[meas_i] for r in rows], label='measured', linewidth=1.2)
+        ax.plot(t, [-r[meas_i] for r in rows], label='measured', linewidth=1.2)
         ax.plot(t, [r[cmd_i] for r in rows], '--', label='commanded', linewidth=1.5)
         ax.set_title(title)
         ax.set_ylabel('wheel velocity [m/s]')

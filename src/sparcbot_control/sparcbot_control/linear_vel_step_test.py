@@ -167,7 +167,7 @@ def plot(path, rows, speeds, duration_s, title_suffix='', show=True, band=True,
     fig, axes = plt.subplots(2, 1, figsize=(11, 7), sharex=True)
  
     for ax, (name, cmd_i, meas_i) in zip(axes, (('Left', 2, 3), ('Right', 4, 5))):
-        ax.plot(t, [r[meas_i] for r in rows], label='measured', linewidth=1.2)
+        ax.plot(t, [-r[meas_i] for r in rows], label='measured', linewidth=1.2)
         cmd = [r[cmd_i] for r in rows]
         ax.plot(t, cmd, '--', label='commanded', linewidth=1.5)
         if band:
