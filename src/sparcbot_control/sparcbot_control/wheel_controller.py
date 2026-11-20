@@ -35,8 +35,8 @@ class WheelController:
         self.config = [left_config, right_config]
 
         # kp, kd, ki
-        self.config[RIGHT].kp = 4
-        self.config[LEFT].kp = 3.5
+        self.config[RIGHT].kp = 3.5
+        self.config[LEFT].kp = 4
 
         self.config[RIGHT].ki = 1.35
         self.config[LEFT].ki = 1.35
@@ -121,8 +121,8 @@ class WheelController:
         u_ff_l = kv_l * target_velocity_m_s[LEFT]
 
         # Define Errors
-        e_r = target_velocity_m_s[RIGHT] - (-1)*measured_velocity_m_s[RIGHT]
-        e_l = target_velocity_m_s[LEFT] - (-1)*measured_velocity_m_s[LEFT]
+        e_r = target_velocity_m_s[RIGHT] - measured_velocity_m_s[RIGHT]
+        e_l = target_velocity_m_s[LEFT] - measured_velocity_m_s[LEFT]
 
 
         # For combating anti-windup
@@ -179,9 +179,9 @@ class WheelController:
             elif target_velocity_m_s[LEFT] < 0 and u_l < 0:
                 u_l = min(u_l, -abs(self.config[LEFT].reverse_breakaway))
 
-        u_r = max(-self.config[RIGHT].max_command, min(self.config[RIGHT].max_command, -u_r))
+        u_r = max(-self.config[RIGHT].max_command, min(self.config[RIGHT].max_command, u_r))
 
-        u_l = max(-self.config[LEFT].max_command, min(self.config[LEFT].max_command, -u_l))
+        u_l = max(-self.config[LEFT].max_command, min(self.config[LEFT].max_command, u_l))
 
         left_wheel_output = WheelControllerOutput(command=u_l) #TODO set command to your final controller output
 

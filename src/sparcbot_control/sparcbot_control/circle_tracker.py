@@ -36,14 +36,15 @@ AUTOSTART = False               # True = drive as soon as /odom arrives (leave F
 
 # Lab 6 pole-placement gains (for v_ref=0.2, w_ref=+0.5).
 #TODO Set your gains here
-K1 = 0.0
-K5 = 0.0
-K6 = 0.0
+
+K1 = -3.0
+K5 = -8.75
+K6 = -3.0
 
 # Safety
 MAX_LINEAR_M_S = 0.30           # command limits
 MAX_ANGULAR_RAD_S = 2.0
-MAX_POSITION_ERROR_M = 0.30     # stop if the robot is further than this from the reference
+MAX_POSITION_ERROR_M = 0.3    # stop if the robot is further than this from the reference
 ODOM_TIMEOUT_S = 0.5            # stop if /odom is silent for this long
 
 

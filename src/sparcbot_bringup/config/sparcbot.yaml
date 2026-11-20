@@ -38,7 +38,7 @@ sparcbot_driver:
     right_motor:
       name: right
       gpio_dir: 22
-      gpio_ps: 1
+      gpio_ps: 16
       gpio_enc_a: 5
       gpio_enc_b: 6
       pwm_chip: 0
